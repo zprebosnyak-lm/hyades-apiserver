@@ -58,7 +58,7 @@ variables:
 #############################################################################################################
    # Kaniko Variables
 #########################################
-    DOCKER_BUILD_DIR: "/src/main/docker/Dockerfile"
+    DOCKER_BUILD_DIR: "./src/main/docker"
     DOCKER_IMAGE: "harbor.global.lmco.com/lmc.eo.swf.secure-infrastructure/hyades-dev-apiserver"
     DOCKER_REGISTRY: harbor.global.lmco.com
     DOCKER_AUTO_TAG_LATEST: "TRUE"
