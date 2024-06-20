@@ -70,4 +70,13 @@ variables:
 kaniko:
   stage: package
   rules:
-    - if: $ENABLE_KANIKO == "true
+    - if: $ENABLE_KANIKO == "true"
+
+# Had to move this to package stage despite being disabled by KANIKO_BOM_GEN variable
+kaniko-bom:
+  stage: package
+
+# Had to move this to package stage despite being disabled by KANIKO_BOM_GEN variable
+kaniko-bom-validate:
+  stage: package
+
