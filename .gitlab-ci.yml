@@ -1,0 +1,45 @@
+upstream-mr:
+  image: harbor.global.lmco.com/lmc.eo.swf.lmified/ext.registry1.dso.mil/ironbank/redhat/ubi/ubi9-minimal:9.3
+  variables:
+    https_proxy: "http://proxy-zsgov.external.lmco.com:80"
+    NO_PROXY: "lmco.com"
+  script:
+    - microdnf install -y jq
+    # Create MR API parameters to use
+    - |
+      cat << EOF >> params.json
+      {
+      "title":"Upstream Integration - PipelineID: $CI_PIPELINE_ID",
+      "source_branch":"upstream-main",
+      "target_branch":"main",
+      "remove_source_branch":"false",
+      "description":"This MR was created by the upstream-mr job. The pipeline is created through a schedule to help keep the upstream github repository integrated with this projects main branch."
+      }
+      EOF
+    # Attempt MR creation. If the JSON response "message" key is null the MR was created. Otherwise an MR for the branch is already open and exits
+    - |
+      create_resp=$(curl -X POST -H "PRIVATE-TOKEN: $UPSTREAM_MR_TOKEN" -H "Content-Type:application/json" --data @"params.json" https://gitlab.global.lmco.com/api/v4/projects/$CI_PROJECT_ID/merge_requests)
+    - echo $create_resp | jq .
+    - existing_mr=$(echo $create_resp | jq .message[0])
+    - |
+      if [[ $existing_mr =~ "already exists" ]]; then
+        echo Exiting...;
+        exit 0;
+      fi;
+    # Get the newly created MR ID and if there are no changes found close MR.
+    - MR_ID=$(echo $create_resp | jq .iid)
+    - |
+      get_resp=$(curl -X GET -H "PRIVATE-TOKEN: $UPSTREAM_MR_TOKEN" https://gitlab.global.lmco.com/api/v4/projects/$CI_PROJECT_ID/merge_requests/$MR_ID)
+    - echo $get_resp | jq .
+    - changes=$(echo $get_resp | jq '.changes_count | tonumber')
+    - |
+      if [[ $changes == 0 ]]; then 
+        echo "No changes in MR, closing MR.";
+        close_resp=$(curl -X PUT -H "PRIVATE-TOKEN: $UPSTREAM_MR_TOKEN" -H "Content-Type:application/json" --data '{"state_event":"close"}' https://gitlab.global.lmco.com/api/v4/projects/$CI_PROJECT_ID/merge_requests/$MR_ID);
+        echo $close_resp | jq .;
+      fi;
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: always
+      allow_failure: false
+    - when: never
