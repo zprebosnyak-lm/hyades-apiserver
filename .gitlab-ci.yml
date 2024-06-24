@@ -60,6 +60,7 @@ variables:
   # Maven Variable
 #########################################
     MAVEN_RELATIVE_SOURCE_DIRECTORY: "."
+    JAVA_CACERTS_PATH: "/opt/java/openjdk/lib/security/cacerts"
     ENABLE_MVN_SITE: "false"
     MAVEN_TAG: "3.9.6-eclipse-temurin-21"
     ENABLE_MVN_BUILD: "true"
