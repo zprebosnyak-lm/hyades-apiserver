@@ -46,8 +46,8 @@ workflow:
 include:
   - remote: "https://pipeline-catalog.global.lmco.com/api/v1/modules/stages/v1.0.10/templates/stages.gitlab-ci.yml"
   - remote: "https://pipeline-catalog.global.lmco.com/api/v1/global/modules/java-maven/v6.2.46/modules/maven-build.yml"
-  # - remote: "https://pipeline-catalog.global.lmco.com/api/v1/global/modules/kaniko/v3.0.23/modules/kaniko-build.gitlab-ci.yml"
-  # - remote: "https://pipeline-catalog.global.lmco.com/api/v1/global/modules/crane/v4.1.1/modules/crane_copy.yml"
+  - remote: "https://pipeline-catalog.global.lmco.com/api/v1/global/modules/kaniko/v3.0.23/modules/kaniko-build.gitlab-ci.yml"
+  - remote: "https://pipeline-catalog.global.lmco.com/api/v1/global/modules/crane/v4.1.1/modules/crane_copy.yml"
 #############################################################################################################
 # Variables
 #############################################################################################################
@@ -66,6 +66,23 @@ variables:
     ENABLE_MVN_BUILD: "true"
     MAVEN_SETTINGS: --settings $MAVEN_RELATIVE_SOURCE_DIRECTORY/settings.xml
 #########################################
+    # Kaniko Variables
+#########################################
+    DOCKER_BUILD_DIR: "./src/main/docker"
+    DOCKER_IMAGE: registry.gitlab.global.lmco.com:443/software-factory/applications/secure-delivery/secure-software-supply-chain-tools/hyades/hyades-api-server
+    DOCKER_REGISTRY: registry.gitlab.global.lmco.com:443
+    DOCKER_IMAGE_NAME_TAGGED: $CI_COMMIT_REF_NAME
+    ENABLE_KANIKO: "true"
+    KANIKO_BOM_GEN: "false"
+#############################################################################################################
+#    # Crane Destination Variables
+# # #########################################
+#     CRANE_DESTINATION_IMAGE: registry.gitlab.global.lmco.com:443/software-factory/applications/secure-delivery/secure-software-supply-chain-tools/hyades/hyades-api-server
+#     CRANE_DESTINATION_IMAGE_TAG: $CI_COMMIT_REF_NAME
+#     CRANE_DESTINATION_REGISTRY: registry.gitlab.global.lmco.com:443
+#     CRANE_DESTINATION_REGISTRY_USER: gitlab-ci-token
+#     CRANE_DESTINATION_REGISTRY_PASSWORD: $GITLAB_API_TOKEN
+# #########################################
 ## Java Build with Maven
 #############################################################################################################
 mvn_build:
@@ -74,40 +91,24 @@ mvn_build:
     script:
         - ${MAVEN_CERT_CMD}
         - cd $MAVEN_RELATIVE_SOURCE_DIRECTORY
-        - mvn $MAVEN_CLI_OPTS -DskipTests clean package -P clean-exclude-wars -P enhance -P embedded-jetty -DskipTests -Dlogback.configuration.file=src/main/docker/logback.xml
+        - mvn $MAVEN_CLI_OPTS -DskipTests package clean package -P clean-exclude-wars -P enhance -P embedded-jetty -DskipTests -Dlogback.configuration.file=src/main/docker/logback.xml
     artifacts:
         paths:
             - $MAVEN_RELATIVE_SOURCE_DIRECTORY/target/
 #############################################################################################################
-#    # Crane Destination Variables
-# #########################################
-#     CRANE_DESTINATION_IMAGE: registry.gitlab.global.lmco.com:443/software-factory/applications/secure-delivery/secure-software-supply-chain-tools/hyades/hyades-api-server
-#     CRANE_DESTINATION_IMAGE_TAG: $CI_COMMIT_REF_NAME
-#     CRANE_DESTINATION_REGISTRY: registry.gitlab.global.lmco.com:443
-#     CRANE_DESTINATION_REGISTRY_USER: gitlab-ci-token
-#     CRANE_DESTINATION_REGISTRY_PASSWORD: $GITLAB_API_TOKEN
-# #########################################
-#     # Kaniko Variables
-# #########################################
-#     DOCKER_BUILD_DIR: "./src/main/docker"
-#     DOCKER_IMAGE: $CRANE_DESTINATION_IMAGE
-#     DOCKER_REGISTRY: $CRANE_DESTINATION_REGISTRY
-#     DOCKER_IMAGE_NAME_TAGGED: $CRANE_DESTINATION_IMAGE_TAG
-#     ENABLE_KANIKO: "true"
-#     KANIKO_BOM_GEN: "false"
-# #############################################################################################################
-# # Kaniko Section
-# #############################################################################################################
-# kaniko:
-#   stage: package
-#   rules:
-#     - if: $ENABLE_KANIKO == "true"
 
-# # Had to move this to package stage despite being disabled by KANIKO_BOM_GEN variable
-# kaniko-bom:
-#   stage: package
+# Kaniko Section
+#############################################################################################################
+kaniko:
+  stage: package
+  rules:
+    - if: $ENABLE_KANIKO == "true"
 
-# # Had to move this to package stage despite being disabled by KANIKO_BOM_GEN variable
-# kaniko-bom-validate:
-#   stage: package
+# Had to move this to package stage despite being disabled by KANIKO_BOM_GEN variable
+kaniko-bom:
+  stage: package
+
+# Had to move this to package stage despite being disabled by KANIKO_BOM_GEN variable
+kaniko-bom-validate:
+  stage: package
 
