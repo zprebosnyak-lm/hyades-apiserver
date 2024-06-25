@@ -92,9 +92,8 @@ mvn_build:
 #############################################################################################################
 kaniko:
   stage: package
-  before_script:
-    # - mkdir ./src/main/docker/target
-    - mv target/dependency-track-apiserver.jar ./src/main/docker/target/dependency-track-apiserver.jar
+  # before_script:
+  #   - mv target/dependency-track-apiserver.jar ./src/main/docker/target/dependency-track-apiserver.jar
   rules:
     - if: $ENABLE_KANIKO == "true"
 
