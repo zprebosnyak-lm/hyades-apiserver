@@ -92,8 +92,6 @@ mvn_build:
 #############################################################################################################
 kaniko:
   stage: package
-  before_script:
-    - cp target/dependency-track-apiserver.jar src/main/docker/
   rules:
     - if: $ENABLE_KANIKO == "true"
 
