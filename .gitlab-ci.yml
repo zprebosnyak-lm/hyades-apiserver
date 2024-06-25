@@ -47,7 +47,6 @@ include:
   - remote: "https://pipeline-catalog.global.lmco.com/api/v1/modules/stages/v1.0.10/templates/stages.gitlab-ci.yml"
   - remote: "https://pipeline-catalog.global.lmco.com/api/v1/global/modules/java-maven/v6.2.46/modules/maven-build.yml"
   - remote: "https://pipeline-catalog.global.lmco.com/api/v1/global/modules/kaniko/v3.0.23/modules/kaniko-build.gitlab-ci.yml"
-  - remote: "https://pipeline-catalog.global.lmco.com/api/v1/global/modules/crane/v4.1.1/modules/crane_copy.yml"
 #############################################################################################################
 # Variables
 #############################################################################################################
@@ -75,14 +74,6 @@ variables:
     ENABLE_KANIKO: "true"
     KANIKO_BOM_GEN: "false"
 #############################################################################################################
-#    # Crane Destination Variables
-# # #########################################
-#     CRANE_DESTINATION_IMAGE: registry.gitlab.global.lmco.com:443/software-factory/applications/secure-delivery/secure-software-supply-chain-tools/hyades/hyades-api-server
-#     CRANE_DESTINATION_IMAGE_TAG: $CI_COMMIT_REF_NAME
-#     CRANE_DESTINATION_REGISTRY: registry.gitlab.global.lmco.com:443
-#     CRANE_DESTINATION_REGISTRY_USER: gitlab-ci-token
-#     CRANE_DESTINATION_REGISTRY_PASSWORD: $GITLAB_API_TOKEN
-# #########################################
 ## Java Build with Maven
 #############################################################################################################
 mvn_build:
