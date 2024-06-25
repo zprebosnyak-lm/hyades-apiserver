@@ -66,6 +66,19 @@ variables:
     ENABLE_MVN_BUILD: "true"
     MAVEN_SETTINGS: --settings $MAVEN_RELATIVE_SOURCE_DIRECTORY/settings.xml
 #########################################
+## Java Build with Maven
+#############################################################################################################
+mvn_build:
+    image: $MAVEN_IMAGE:$MAVEN_TAG
+    stage: build
+    script:
+        - ${MAVEN_CERT_CMD}
+        - cd $MAVEN_RELATIVE_SOURCE_DIRECTORY
+        - mvn $MAVEN_CLI_OPTS -DskipTests clean package -P clean-exclude-wars -P enhance -P embedded-jetty -DskipTests -Dlogback.configuration.file=src/main/docker/logback.xml
+    artifacts:
+        paths:
+            - $MAVEN_RELATIVE_SOURCE_DIRECTORY/target/
+#############################################################################################################
 #    # Crane Destination Variables
 # #########################################
 #     CRANE_DESTINATION_IMAGE: registry.gitlab.global.lmco.com:443/software-factory/applications/secure-delivery/secure-software-supply-chain-tools/hyades/hyades-api-server
@@ -82,16 +95,6 @@ variables:
 #     DOCKER_IMAGE_NAME_TAGGED: $CRANE_DESTINATION_IMAGE_TAG
 #     ENABLE_KANIKO: "true"
 #     KANIKO_BOM_GEN: "false"
-# #############################################################################################################
-
-# ## Java Build with Maven
-# #############################################################################################################
-# mvn_build:
-#     image: $MAVEN_IMAGE:$MAVEN_TAG
-#     stage: build
-#     artifacts:
-#         paths:
-#             - $MAVEN_RELATIVE_SOURCE_DIRECTORY/target/
 # #############################################################################################################
 # # Kaniko Section
 # #############################################################################################################
