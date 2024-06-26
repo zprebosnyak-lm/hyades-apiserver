@@ -74,6 +74,7 @@ variables:
     DOCKER_IMAGE_NAME_TAGGED: $CI_COMMIT_REF_NAME
     ENABLE_KANIKO: "true"
     KANIKO_BOM_GEN: "false"
+    KANIKO_ADDITIONAL_FLAGS: --build-arg WAR_FILENAME=dependency-track-apiserver.jar
 #############################################################################################################
 ## Java Build with Maven
 #############################################################################################################
