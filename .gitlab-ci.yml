@@ -67,7 +67,8 @@ variables:
 #########################################
     # Kaniko Variables
 #########################################
-    DOCKER_BUILD_DIR: "./src/main/docker"
+    DOCKER_BUILD_DIR: "."
+    DOCKER_FILE: src/main/docker/Dockerfile
     DOCKER_IMAGE: registry.gitlab.global.lmco.com:443/software-factory/applications/secure-delivery/secure-software-supply-chain-tools/hyades/hyades-api-server
     DOCKER_REGISTRY: registry.gitlab.global.lmco.com:443
     DOCKER_IMAGE_NAME_TAGGED: $CI_COMMIT_REF_NAME
