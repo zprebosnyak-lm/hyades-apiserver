@@ -95,7 +95,7 @@ mvn_build:
 kaniko:
   stage: package
   rules:
-    - if: $ENABLE_KANIKO == "true" && $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - if: $ENABLE_KANIKO == "true"
 
 # Had to move this to package stage despite being disabled by KANIKO_BOM_GEN variable
 kaniko-bom:
