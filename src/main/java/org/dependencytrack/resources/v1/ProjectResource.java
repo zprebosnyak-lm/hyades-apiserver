@@ -133,16 +133,8 @@ public class ProjectResource extends AlpineResource {
             @ApiResponse(code = 403, message = "Access to the specified project is forbidden"),
             @ApiResponse(code = 404, message = "The project could not be found")
     })
-    // String[] validPermissions = new String[] { Permissions.Constants.VIEW_PORTFOLIO, Permissions.Constants.VIEW_VULNERABILITY };
-    // @PermissionRequired(value={Permissions.Constants.VIEW_PORTFOLIO, Permissions.Constants.VIEW_VULNERABILITY})
-    // public Response getProject(
-    //     @ApiParam(value = "The UUID of the project to retrieve", format = "uuid", required = true)
-    //     @PathParam("uuid") @ValidUuid String uuid) {
-    //     if (!(hasPermission(Permissions.Constants.PORTFOLIO_MANAGEMENT) || hasPermission(Permissions.Constants.PROJECT_CREATION_UPLOAD))) {
-    //         return Response.status(Response.Status.FORBIDDEN).build();
-    //     }
     
-    @PermissionRequired({Permissions.Constants.VIEW_PORTFOLIO, Permissions.Constants.VIEW_VULNERABILITY})
+    @PermissionRequired(Permissions.Constants.VIEW_PORTFOLIO)
     public Response getProject(
             @ApiParam(value = "The UUID of the project to retrieve", format = "uuid", required = true)
             @PathParam("uuid") @ValidUuid String uuid) {
