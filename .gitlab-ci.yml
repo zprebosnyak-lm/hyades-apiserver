@@ -98,6 +98,7 @@ get_version:
     - curl -o yq.tar.gz https://$EFOSS_USER:$EFOSS_TOKEN@nexus.global.lmco.com/repository/efoss-raw/yq/4.43.1/yq_linux_amd64.tar.gz
     - tar -xvf yq.tar.gz
     - echo POM_VERSION=$(./yq_linux_amd64 '.project.version' pom.xml | awk '{print tolower($0)}') > variables.env
+    - cat variables.env
   artifacts:
     reports:
       dotenv: variables.env
@@ -106,7 +107,6 @@ get_version:
 # Kaniko Section
 #############################################################################################################
 kaniko:
-  #stage: package
   before_script:
     - |
       if [[ $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH ]]; then
