@@ -95,13 +95,13 @@ mvn_build:
 #############################################################################################################
 get_version:
   image: harbor.global.lmco.com/ext.hub.docker.com/mikefarah/yq:4
-  variables:
-    CI_DEBUG_TRACE: "true"
+  # variables:
+  #   CI_DEBUG_TRACE: "true"
   stage: build
   script:
     - echo im here
-    - yq '.project.version' pom.xml
-    - echo $(yq '.project.version' pom.xml | awk '{print tolower($0)}')-snapshot
+    # - yq '.project.version' pom.xml
+    # - echo $(yq '.project.version' pom.xml | awk '{print tolower($0)}')-snapshot
     # - echo POM_VERSION=$(yq '.project.version' pom.xml | awk '{print tolower($0)}')-snapshot > variables.env
   artifacts:
     reports:
