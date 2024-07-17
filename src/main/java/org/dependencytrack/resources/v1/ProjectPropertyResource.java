@@ -104,7 +104,7 @@ public class ProjectPropertyResource extends AbstractConfigPropertyResource {
             value = "Creates a new project property",
             response = ProjectProperty.class,
             code = 201,
-            notes = "<p>Requires permission <strong>PORTFOLIO_MANAGEMENT</strong> or <strong>PORTFOLIO_MANAGEMENT_CREATE</strong></p>"
+            notes = "<p>Requires permission <strong>PORTFOLIO_MANAGEMENT</strong> or <strong>PORTFOLIO_MANAGEMENT_UPDATE</strong></p>"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -112,7 +112,7 @@ public class ProjectPropertyResource extends AbstractConfigPropertyResource {
             @ApiResponse(code = 404, message = "The project could not be found"),
             @ApiResponse(code = 409, message = "A property with the specified project/group/name combination already exists")
     })
-    @PermissionRequired({Permissions.Constants.PORTFOLIO_MANAGEMENT, Permissions.Constants.PORTFOLIO_MANAGEMENT_CREATE})
+    @PermissionRequired({Permissions.Constants.PORTFOLIO_MANAGEMENT, Permissions.Constants.PORTFOLIO_MANAGEMENT_UPDATE})
     public Response createProperty(
             @ApiParam(value = "The UUID of the project to create a property for", format = "uuid", required = true)
             @PathParam("uuid") @ValidUuid String uuid,

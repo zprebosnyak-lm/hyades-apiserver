@@ -242,14 +242,14 @@ public class LicenseGroupResource extends AlpineResource {
     @ApiOperation(
             value = "Removes the license from the license group.",
             response = LicenseGroup.class,
-            notes = "<p>Requires permission <strong>POLICY_MANAGEMENT</strong> or <strong>POLICY_MANAGEMENT_DELETE</strong></p>"
+            notes = "<p>Requires permission <strong>POLICY_MANAGEMENT</strong> or <strong>POLICY_MANAGEMENT_UPDATE</strong></p>"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 304, message = "The license is not a member with the license group"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 404, message = "The license group or license could not be found")
     })
-    @PermissionRequired({Permissions.Constants.POLICY_MANAGEMENT, Permissions.Constants.POLICY_MANAGEMENT_DELETE})
+    @PermissionRequired({Permissions.Constants.POLICY_MANAGEMENT, Permissions.Constants.POLICY_MANAGEMENT_UPDATE})
     public Response removeLicenseFromLicenseGroup(
             @ApiParam(value = "A valid license group", format = "uuid", required = true)
             @PathParam("uuid") @ValidUuid String uuid,
