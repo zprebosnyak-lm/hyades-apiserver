@@ -69,9 +69,7 @@ variables:
   #########################################
   DOCKER_BUILD_DIR: "."
   DOCKER_FILE: src/main/docker/Dockerfile
-  # DOCKER_IMAGE: registry.gitlab.global.lmco.com:443/software-factory/applications/secure-delivery/secure-software-supply-chain-tools/hyades/hyades-api-server
   DOCKER_REGISTRY: registry.gitlab.global.lmco.com:443
-  # DOCKER_IMAGE_NAME_TAGGED: $CI_COMMIT_REF_NAME
   ENABLE_KANIKO: "true"
   KANIKO_BOM_GEN: "false"
   KANIKO_ADDITIONAL_FLAGS: --build-arg WAR_FILENAME=dependency-track-apiserver.jar
@@ -121,12 +119,3 @@ kaniko:
     - echo DOCKER_TAG - $DOCKER_TAG
   rules:
     - if: $ENABLE_KANIKO == "true"
-
-# # Had to move this to package stage despite being disabled by KANIKO_BOM_GEN variable
-# kaniko-bom:
-#   stage: package
-
-# # Had to move this to package stage despite being disabled by KANIKO_BOM_GEN variable
-# kaniko-bom-validate:
-#   stage: package
-
