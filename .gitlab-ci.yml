@@ -97,7 +97,9 @@ get_version:
   image: harbor.global.lmco.com/ext.hub.docker.com/mikefarah/yq:4
   stage: build
   script:
-    - echo POM_VERSION=$(yq '.project.version' pom.xml | awk '{print tolower($0)}')-snapshot > variables.env
+    - yq '.project.version' pom.xml
+    - echo $(yq '.project.version' pom.xml | awk '{print tolower($0)}')-snapshot
+    # - echo POM_VERSION=$(yq '.project.version' pom.xml | awk '{print tolower($0)}')-snapshot > variables.env
   artifacts:
     reports:
       dotenv: variables.env
