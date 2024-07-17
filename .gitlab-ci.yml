@@ -94,15 +94,12 @@ mvn_build:
 # Parse Build version
 #############################################################################################################
 get_version:
-  image: harbor.global.lmco.com/ext.hub.docker.com/mikefarah/yq:4
-  # variables:
-  #   CI_DEBUG_TRACE: "true"
+  image: harbor.global.lmco.com/lmc.eo.swf.lmified/ext.hub.docker.com/alpine/curl:8.5.0
   stage: build
   script:
-    - echo im here
-    # - yq '.project.version' pom.xml
-    # - echo $(yq '.project.version' pom.xml | awk '{print tolower($0)}')-snapshot
-    # - echo POM_VERSION=$(yq '.project.version' pom.xml | awk '{print tolower($0)}')-snapshot > variables.env
+    - wget https://$EFOSS_USER:$EFOSS_TOKEN@nexus.global.lmco.com/repository/efoss-raw/yq/4.43.1/yq_linux_amd64.tar.gz -O yq.tar.gz
+    - tar -xvf yq.tar.gz
+    - echo POM_VERSION=$(./yq_linux_amd64 '.project.version' pom.xml | awk '{print tolower($0)}') > variables.env
   artifacts:
     reports:
       dotenv: variables.env
