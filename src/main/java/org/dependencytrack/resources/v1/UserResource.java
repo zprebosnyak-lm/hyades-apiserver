@@ -490,7 +490,7 @@ public class UserResource extends AlpineResource {
     @ApiOperation(
             value = "Updates a managed user.",
             response = ManagedUser.class,
-            notes = "<p>Requires permission <strong>ACCESS_MANAGEMENT</strong> or <strong>ACCESS_MANAGEMENTUPDATE</strong></p>"
+            notes = "<p>Requires permission <strong>ACCESS_MANAGEMENT</strong> or <strong>ACCESS_MANAGEMENT_UPDATE</strong></p>"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Missing required field"),
