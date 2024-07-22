@@ -47,10 +47,10 @@ include:
   - remote: "https://pipeline-catalog.global.lmco.com/api/v1/modules/stages/v1.0.10/templates/stages.gitlab-ci.yml"
   - remote: "https://pipeline-catalog.global.lmco.com/api/v1/global/modules/java-maven/v6.2.46/modules/maven-build.yml"
   - remote: "https://pipeline-catalog.global.lmco.com/api/v1/global/modules/kaniko/v3.0.23/modules/kaniko-build.gitlab-ci.yml"
+
 #############################################################################################################
 # Variables
 #############################################################################################################
-
 variables:
   http_proxy: http://proxy-zsgov.external.lmco.com:80
   https_proxy: http://proxy-zsgov.external.lmco.com:80
@@ -69,12 +69,11 @@ variables:
   #########################################
   DOCKER_BUILD_DIR: "."
   DOCKER_FILE: src/main/docker/Dockerfile
-  DOCKER_IMAGE: registry.gitlab.global.lmco.com:443/software-factory/applications/secure-delivery/secure-software-supply-chain-tools/hyades/hyades-api-server
   DOCKER_REGISTRY: registry.gitlab.global.lmco.com:443
-  DOCKER_IMAGE_NAME_TAGGED: $CI_COMMIT_REF_NAME
   ENABLE_KANIKO: "true"
   KANIKO_BOM_GEN: "false"
   KANIKO_ADDITIONAL_FLAGS: --build-arg WAR_FILENAME=dependency-track-apiserver.jar
+
 #############################################################################################################
 ## Java Build with Maven
 #############################################################################################################
@@ -88,20 +87,33 @@ mvn_build:
   artifacts:
     paths:
       - $MAVEN_RELATIVE_SOURCE_DIRECTORY/target/
-#############################################################################################################
 
+#############################################################################################################
+# Parse Build version
+#############################################################################################################
+get_version:
+  image: harbor.global.lmco.com/lmc.eo.swf.lmified/ext.hub.docker.com/alpine/curl:8.5.0
+  stage: build
+  script:
+    - curl -o yq.tar.gz https://$EFOSS_USER:$EFOSS_TOKEN@nexus.global.lmco.com/repository/efoss-raw/yq/4.43.1/yq_linux_amd64.tar.gz
+    - tar -xvf yq.tar.gz
+    - echo POM_VERSION=$(./yq_linux_amd64 '.project.version' pom.xml | awk '{print tolower($0)}') > variables.env
+    - cat variables.env
+  artifacts:
+    reports:
+      dotenv: variables.env
+
+#############################################################################################################
 # Kaniko Section
 #############################################################################################################
 kaniko:
-  stage: package
+  before_script:
+    - |
+      if [[ $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH ]]; then
+        export DOCKER_TAG="$CI_COMMIT_REF_SLUG-$POM_VERSION"
+      else
+        export DOCKER_TAG="$CI_COMMIT_REF_SLUG-$POM_VERSION-$CI_COMMIT_SHORT_SHA"
+      fi
+    - echo DOCKER_TAG - $DOCKER_TAG
   rules:
     - if: $ENABLE_KANIKO == "true"
-
-# Had to move this to package stage despite being disabled by KANIKO_BOM_GEN variable
-kaniko-bom:
-  stage: package
-
-# Had to move this to package stage despite being disabled by KANIKO_BOM_GEN variable
-kaniko-bom-validate:
-  stage: package
-
