@@ -441,9 +441,6 @@ final class ProjectQueryManager extends QueryManager implements IQueryManager {
         if (project.getParent() != null && !Boolean.TRUE.equals(project.getParent().isActive())) {
             throw new IllegalArgumentException("An inactive Parent cannot be selected as parent");
         }
-        if (project.isActive() == null) {
-            project.setActive(Boolean.TRUE);
-        }
         final Project result = persist(project);
         final List<Tag> resolvedTags = resolveTags(tags);
         bind(project, resolvedTags);
@@ -617,6 +614,7 @@ final class ProjectQueryManager extends QueryManager implements IQueryManager {
                     analysis.setAnalysisJustification(sourceAnalysis.getAnalysisJustification());
                     analysis.setAnalysisState(sourceAnalysis.getAnalysisState());
                     analysis.setAnalysisDetails(sourceAnalysis.getAnalysisDetails());
+                    analysis.setVulnerabilityPolicyId(sourceAnalysis.getVulnerabilityPolicyId());
                     analysis = persist(analysis);
                     if (sourceAnalysis.getAnalysisComments() != null) {
                         for (final AnalysisComment sourceComment : sourceAnalysis.getAnalysisComments()) {

@@ -31,7 +31,7 @@
     <groupId>org.dependencytrack</groupId>
     <artifactId>dependency-track</artifactId>
     <packaging>war</packaging>
-    <version>5.5.0-SNAPSHOT</version>
+    <version>5.6.0-SNAPSHOT</version>
 
     <name>Dependency-Track</name>
     <url>https://dependencytrack.org/</url>
@@ -84,6 +84,7 @@
     <properties>
         <!-- Dependency Versions -->
         <lib.alpine.version>${project.parent.version}</lib.alpine.version>
+        <nimbusds-oauth2-oidc-sdk>11.13</nimbusds-oauth2-oidc-sdk>
         <lib.awaitility.version>4.2.1</lib.awaitility.version>
         <lib.cel-tools.version>0.4.4</lib.cel-tools.version>
         <lib.checkstyle.version>10.17.0</lib.checkstyle.version>
@@ -92,21 +93,23 @@
         <lib.cpe-parser.version>2.1.0</lib.cpe-parser.version>
         <lib.cvss-calculator.version>1.4.3</lib.cvss-calculator.version>
         <lib.owasp-rr-calculator.version>1.0.1</lib.owasp-rr-calculator.version>
-        <lib.cyclonedx-java.version>8.0.3</lib.cyclonedx-java.version>
+        <lib.cyclonedx-java.version>9.0.4</lib.cyclonedx-java.version>
         <lib.jackson.version>2.17.1</lib.jackson.version>
         <lib.jackson-databind.version>2.17.1</lib.jackson-databind.version>
         <lib.jaxb.runtime.version>2.3.6</lib.jaxb.runtime.version>
         <lib.jdbi.version>3.45.1</lib.jdbi.version>
-        <lib.json-unit.version>3.2.7</lib.json-unit.version>
-        <lib.kafka.version>3.7.0</lib.kafka.version>
+        <lib.json-unit.version>3.4.1</lib.json-unit.version>
+        <lib.kafka.version>3.7.1</lib.kafka.version>
         <lib.liquibase.version>4.28.0</lib.liquibase.version>
         <lib.micrometer-jvm-extras.version>0.2.2</lib.micrometer-jvm-extras.version>
-        <lib.minio.version>8.5.10</lib.minio.version>
+        <lib.minio.version>8.5.11</lib.minio.version>
+        <lib.kotlin-stdlib.version>2.0.0</lib.kotlin-stdlib.version>
+        <lib.wiremock.version>3.9.1</lib.wiremock.version>
         <lib.packageurl.version>1.5.0</lib.packageurl.version>
         <lib.parallel-consumer.version>0.5.3.0</lib.parallel-consumer.version>
         <lib.pebble.version>3.2.2</lib.pebble.version>
         <lib.protobuf-java.version>3.25.3</lib.protobuf-java.version>
-        <lib.testcontainers.version>1.19.8</lib.testcontainers.version>
+        <lib.testcontainers.version>1.20.0</lib.testcontainers.version>
         <lib.resilience4j.version>2.2.0</lib.resilience4j.version>
         <lib.system-rules.version>1.19.0</lib.system-rules.version>
         <lib.versatile.version>0.7.0</lib.versatile.version>
@@ -114,7 +117,7 @@
         <lib.junit-params.version>1.1.1</lib.junit-params.version>
         <lib.log4j-over-slf4j.version>2.0.13</lib.log4j-over-slf4j.version>
         <lib.httpclient.version>4.5.14</lib.httpclient.version>
-        <lib.net.javacrumbs.shedlock.version>5.13.0</lib.net.javacrumbs.shedlock.version>
+        <lib.net.javacrumbs.shedlock.version>5.14.0</lib.net.javacrumbs.shedlock.version>
         <lib.javacron.version>1.4.0</lib.javacron.version>
         <lib.jdbc-driver.postgresql.version>42.7.3</lib.jdbc-driver.postgresql.version>
         <!-- Maven Plugin Properties -->
@@ -124,7 +127,7 @@
         <!-- Maven Plugin Versions -->
         <plugin.checkstyle.version>3.4.0</plugin.checkstyle.version>
         <plugin.protoc-jar.version>3.11.4</plugin.protoc-jar.version>
-        <plugin.jetty.version>10.0.21</plugin.jetty.version>
+        <plugin.jetty.version>10.0.22</plugin.jetty.version>
         <!-- SonarCloud properties -->
         <sonar.exclusions>src/main/webapp/**</sonar.exclusions>
         <!-- Tool Versions -->
@@ -144,6 +147,35 @@
             </snapshots>
         </repository>
     </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Managed dependency to override vulnerable version in the parent POM -->
+            <dependency>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>oauth2-oidc-sdk</artifactId>
+                <version>${nimbusds-oauth2-oidc-sdk}</version>
+            </dependency>
+
+            <!-- Managed dependencies to exclude/override vulnerable version of kotlin-stdlib-jdk8 -->
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${lib.minio.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib-jdk8</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>${lib.kotlin-stdlib.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Alpine -->
@@ -367,9 +399,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock-jre8</artifactId>
-            <version>3.0.1</version>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>${lib.wiremock.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -391,18 +423,6 @@
             <version>${lib.liquibase.version}</version>
         </dependency>
 
-        <!-- Xerces -->
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.12.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <!-- Commons Compress -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -432,10 +452,14 @@
             <artifactId>jackson-dataformat-yaml</artifactId>
             <version>${lib.jackson.version}</version>
         </dependency>
+
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
-            <version>${lib.minio.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
         </dependency>
 
         <!-- Test Dependencies -->
@@ -617,6 +641,7 @@
                 <configuration>
                     <excludes>
                         <exclude>org/cyclonedx/proto/**/*</exclude>
+                        <exclude>org/dependencytrack/dev/**/*</exclude>
                         <exclude>org/dependencytrack/proto/**/*</exclude>
                     </excludes>
                 </configuration>
@@ -673,6 +698,13 @@
                     <webApp>
                         <contextPath>/</contextPath>
                     </webApp>
+                    <systemProperties>
+                        <!--
+                            Disable Jetty warnings about JARs being scanned from multiple locations.
+                            https://stackoverflow.com/a/73964232
+                        -->
+                        <org.slf4j.simpleLogger.log.org.eclipse.jetty.annotations.AnnotationParser>ERROR</org.slf4j.simpleLogger.log.org.eclipse.jetty.annotations.AnnotationParser>
+                    </systemProperties>
                 </configuration>
             </plugin>
             <plugin>
@@ -692,7 +724,7 @@
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-clean-plugin</artifactId>
-                            <version>3.3.2</version>
+                            <version>3.4.0</version>
                             <configuration>
                                 <excludeDefaultDirectories>true</excludeDefaultDirectories>
                                 <filesets>
@@ -725,6 +757,51 @@
             <properties>
                 <war-embedded-finalname>${project.build.finalName}-apiserver</war-embedded-finalname>
             </properties>
+        </profile>
+        <profile>
+            <id>dev-services</id>
+            <properties>
+                <!-- Don't compile test classes, we only want to run Jetty. -->
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.testcontainers</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>${lib.testcontainers.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.testcontainers</groupId>
+                    <artifactId>redpanda</artifactId>
+                    <version>${lib.testcontainers.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <!--
+                        Unfortunately required by testcontainers:
+                        https://github.com/testcontainers/testcontainers-java/issues/970
+                    -->
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                    <version>${lib.junit.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+                        <version>${plugin.jetty.version}</version>
+                        <configuration>
+                            <systemProperties>
+                                <dev.services.enabled>true</dev.services.enabled>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 

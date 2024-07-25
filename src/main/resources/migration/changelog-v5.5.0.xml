@@ -145,9 +145,29 @@
     <changeSet id="v5.5.0-11" author="nscuro">
         <customChange class="org.dependencytrack.persistence.migration.change.v550.ComputeSeveritiesChange"/>
         <sql splitStatements="true">
-            DROP FUNCTION IF EXISTS "CVSSV2_TO_SEVERITY";
-            DROP FUNCTION IF EXISTS "CVSSV3_TO_SEVERITY";
-            DROP FUNCTION IF EXISTS "CALC_SEVERITY";
+            DROP FUNCTION IF EXISTS "CVSSV2_TO_SEVERITY"(NUMERIC);
+            DROP FUNCTION IF EXISTS "CVSSV3_TO_SEVERITY"(NUMERIC);
+            DROP FUNCTION IF EXISTS "CALC_SEVERITY"(VARCHAR, NUMERIC, NUMERIC);
+            DROP FUNCTION IF EXISTS "CALC_SEVERITY"(VARCHAR, VARCHAR, NUMERIC, NUMERIC);
         </sql>
+    </changeSet>
+
+    <changeSet id="v5.5.0-12" author="sahibamittal">
+        <modifyDataType tableName="COMPONENT_PROPERTY" columnName="GROUPNAME" newDataType="VARCHAR(255)"/>
+        <modifyDataType tableName="COMPONENT_PROPERTY" columnName="PROPERTYNAME" newDataType="VARCHAR(255)"/>
+        <modifyDataType tableName="COMPONENT_PROPERTY" columnName="PROPERTYVALUE" newDataType="VARCHAR(1024)"/>
+        <modifyDataType tableName="COMPONENT_PROPERTY" columnName="DESCRIPTION" newDataType="VARCHAR(255)"/>
+    </changeSet>
+
+    <changeSet id="v5.5.0-13" author="nscuro">
+        <sql>UPDATE "PROJECT" SET "ACTIVE" = TRUE WHERE "ACTIVE" IS NULL</sql>
+        <addDefaultValue tableName="PROJECT" columnName="ACTIVE" defaultValueBoolean="true"/>
+        <addNotNullConstraint tableName="PROJECT" columnName="ACTIVE"/>
+    </changeSet>
+
+    <changeSet id="v5.5.0-14" author="nscuro">
+        <sql>UPDATE "VULNERABILITY_POLICY" SET "OPERATION_MODE" = 'APPLY' WHERE "OPERATION_MODE" IS NULL</sql>
+        <addDefaultValue tableName="VULNERABILITY_POLICY" columnName="OPERATION_MODE" defaultValue="APPLY"/>
+        <addNotNullConstraint tableName="VULNERABILITY_POLICY" columnName="OPERATION_MODE"/>
     </changeSet>
 </databaseChangeLog>

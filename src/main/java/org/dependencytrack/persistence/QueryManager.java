@@ -80,6 +80,7 @@ import org.dependencytrack.model.Vex;
 import org.dependencytrack.model.ViolationAnalysis;
 import org.dependencytrack.model.ViolationAnalysisComment;
 import org.dependencytrack.model.ViolationAnalysisState;
+import org.dependencytrack.model.VulnIdAndSource;
 import org.dependencytrack.model.Vulnerability;
 import org.dependencytrack.model.VulnerabilityAlias;
 import org.dependencytrack.model.VulnerabilityMetrics;
@@ -112,7 +113,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -432,29 +432,6 @@ public class QueryManager extends AlpineQueryManager {
             integrityAnalysisQueryManager = (request == null) ? new IntegrityAnalysisQueryManager(getPersistenceManager()) : new IntegrityAnalysisQueryManager(getPersistenceManager(), request);
         }
         return integrityAnalysisQueryManager;
-    }
-
-    /**
-     * Get the IDs of the {@link Team}s a given {@link Principal} is a member of.
-     *
-     * @return A {@link Set} of {@link Team} IDs
-     */
-    protected Set<Long> getTeamIds(final Principal principal) {
-        final Set<Long> principalTeamIds = new HashSet<>();
-
-        if (principal instanceof final UserPrincipal userPrincipal
-                && userPrincipal.getTeams() != null) {
-            for (final Team userInTeam : userPrincipal.getTeams()) {
-                principalTeamIds.add(userInTeam.getId());
-            }
-        } else if (principal instanceof final ApiKey apiKey
-                && apiKey.getTeams() != null) {
-            for (final Team userInTeam : apiKey.getTeams()) {
-                principalTeamIds.add(userInTeam.getId());
-            }
-        }
-
-        return principalTeamIds;
     }
 
     private void disableL2Cache() {
@@ -1153,6 +1130,10 @@ public class QueryManager extends AlpineQueryManager {
         return getVulnerabilityQueryManager().getVulnerabilityAliases(vulnerability);
     }
 
+    public Map<VulnIdAndSource, List<VulnerabilityAlias>> getVulnerabilityAliases(final Collection<VulnIdAndSource> vulnIdAndSources) {
+        return getVulnerabilityQueryManager().getVulnerabilityAliases(vulnIdAndSources);
+    }
+
     List<Analysis> getAnalyses(Project project) {
         return getFindingsQueryManager().getAnalyses(project);
     }
@@ -1610,6 +1591,10 @@ public class QueryManager extends AlpineQueryManager {
         }
 
         return results;
+    }
+
+    public List<RepositoryMetaComponent> getRepositoryMetaComponents(final List<RepositoryQueryManager.RepositoryMetaComponentSearch> list) {
+        return getRepositoryQueryManager().getRepositoryMetaComponents(list);
     }
 
     /**

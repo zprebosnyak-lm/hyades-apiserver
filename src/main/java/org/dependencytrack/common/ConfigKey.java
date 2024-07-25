@@ -34,7 +34,7 @@ public enum ConfigKey implements Config.Key {
     KAFKA_PRODUCER_DRAIN_TIMEOUT_DURATION("kafka.producer.drain.timeout.duration", "PT30S"),
     KAFKA_TLS_ENABLED("kafka.tls.enabled", false),
     KAFKA_TLS_PROTOCOL("kafka.security.protocol", ""),
-    KAFKA_TOPIC_PREFIX("kafka.topic.prefix", ""),
+    DT_KAFKA_TOPIC_PREFIX("dt.kafka.topic.prefix", ""),
     KAFKA_TRUST_STORE_PASSWORD("kafka.truststore.password", ""),
     KAFKA_TRUST_STORE_PATH("kafka.truststore.path", ""),
 
@@ -97,7 +97,12 @@ public enum ConfigKey implements Config.Key {
     DATABASE_MIGRATION_URL("database.migration.url", null),
     DATABASE_MIGRATION_USERNAME("database.migration.username", null),
     DATABASE_MIGRATION_PASSWORD("database.migration.password", null),
-    DATABASE_RUN_MIGRATIONS("database.run.migrations", true);
+    DATABASE_RUN_MIGRATIONS("database.run.migrations", true),
+
+    DEV_SERVICES_ENABLED("dev.services.enabled", false),
+    DEV_SERVICES_IMAGE_FRONTEND("dev.services.image.frontend", "ghcr.io/dependencytrack/hyades-frontend:snapshot"),
+    DEV_SERVICES_IMAGE_KAFKA("dev.services.image.kafka", "docker.redpanda.com/vectorized/redpanda:v24.1.11"),
+    DEV_SERVICES_IMAGE_POSTGRES("dev.services.image.postgres", "postgres:16");
 
     private final String propertyName;
     private final Object defaultValue;
